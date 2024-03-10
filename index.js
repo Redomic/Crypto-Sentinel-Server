@@ -633,7 +633,7 @@ app.use((err, req, res, next) => {
 mongoose
   .connect("mongodb://localhost/Crypto-Sentinel")
   .then(() => {
-    app.listen(5000, () => {
+    app.listen(5300, () => {
       console.log("Server running on PORT: 5000");
     });
 
