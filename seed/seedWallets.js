@@ -3,6 +3,7 @@ import Node from "../models/Node.js";
 import Transaction from "../models/Transaction.js";
 import fs from "fs";
 import csv from "csv-parser";
+import readline from "readline";
 import path from "path";
 
 const enumWithWeightages = [
@@ -105,6 +106,34 @@ const readCsv = () => {
     });
 };
 
+// const readCsv = () => {
+//   const csvFilePath = "./data.csv";
+//   const filePath = path.resolve(__dirname, csvFilePath);
+//   const results = [];
+
+//   const rl = readline.createInterface({
+//     input: fs.createReadStream(filePath),
+//     output: process.stdout,
+//     terminal: false,
+//   });
+
+//   let rowCount = 0;
+//   rl.on("line", (line) => {
+//     rowCount++;
+//     results.push(line);
+//     if (rowCount >= 10000) {
+//       rl.close(); // Close the stream after reading 10,000 lines
+//     }
+//   });
+
+//   rl.on("close", async () => {
+//     console.log("DATA READ COMPLETE");
+//     // Assuming you have a function to process the data
+//     seedNodesAndLinks();
+//     console.log("FINISHED ADDING TO DB");
+//   });
+// };
+
 const seedNodesAndLinks = async () => {
   var counter = 0;
   for (let i = 0; i <= results.length; i++) {
@@ -142,7 +171,7 @@ const seedNodesAndLinks = async () => {
       const source = results[i].From;
       const sourceNode = await Node.findOne({ name: source }).select("_id");
 
-      console.log(sourceNode);
+      // console.log(sourceNode);
       if (sourceNode) {
         const target = results[i].To;
         const targetNode = await Node.findOne({ name: target }).select("_id");
@@ -153,7 +182,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter);
+          // console.log(counter);
         } else {
           const newTargetNode = await Node.create({
             name: target,
@@ -168,7 +197,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter);
+          // console.log(counter);
         }
       } else {
         const newSourceNode = await Node.create({
@@ -189,7 +218,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter);
+          // console.log(counter);
         } else {
           const newTargetNode = await Node.create({
             name: target,
@@ -204,11 +233,11 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter);
+          // console.log(counter);
         }
       }
     } catch (err) {
-      console.log(err);
+      console.log("ERROR");
     }
   }
 };
