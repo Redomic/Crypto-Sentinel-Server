@@ -153,7 +153,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter, ": ", transaction);
+          console.log(counter);
         } else {
           const newTargetNode = await Node.create({
             name: target,
@@ -168,7 +168,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter, ": ", transaction);
+          console.log(counter);
         }
       } else {
         const newSourceNode = await Node.create({
@@ -189,7 +189,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter, ": ", transaction);
+          console.log(counter);
         } else {
           const newTargetNode = await Node.create({
             name: target,
@@ -204,7 +204,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          console.log(counter, ": ", transaction);
+          console.log(counter);
         }
       }
     } catch (err) {
