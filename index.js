@@ -69,18 +69,14 @@ app.use(cookieParser(process.env.COOKIESECRET));
 const corsOrigin =
   process.env.SERVERMODE === "development"
     ? true
-    : [
-        "https://vitap.locaro.in",
-        "https://admin.vitap.locaro.in",
-        "https://demo.vitap.locaro.in",
-      ];
+    : ["https://sentinel.redomic.in", "https://www.sentinel.redomic.in"];
 
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ credentials: true, origin: corsOrigin }));
 
 // ------------------------------------------------------------- ROUTES
 
 app.get(
-  "/nodes",
+  "/api/nodes",
   catchAsync(async (req, res) => {
     const limiter = 15000;
     const nodes = await Node.find({}).limit(limiter);
@@ -128,7 +124,7 @@ app.get(
 );
 
 app.get(
-  "/node/:id",
+  "/api/node/:id",
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const transactions = await Transaction.find({
@@ -145,7 +141,7 @@ app.get(
 //
 
 app.get(
-  "/node/:id/graph",
+  "/api/node/:id/graph",
   catchAsync(async (req, res) => {
     const id = new mongoose.Types.ObjectId(req.params.id);
 
@@ -207,7 +203,7 @@ app.get(
 );
 
 app.post(
-  "/chat",
+  "/api/chat",
   catchAsync(async (req, res) => {
     const assistantIdToUse = "asst_FEH0IMG5qtmrgwaFhEry6gqO"; // Replace with your assistant ID
 
@@ -574,7 +570,7 @@ app.post(
 // );
 
 app.get(
-  "/chat/:selectedNode",
+  "/api/chat/:selectedNode",
   catchAsync(async (req, res) => {
     const { selectedNode } = req.params;
     const thread = await Thread.find({
@@ -598,7 +594,7 @@ app.get(
 );
 
 app.get(
-  "/crawler",
+  "/api/crawler",
   catchAsync(async (req, res) => {
     const wallets = await Crawler.find({});
 
@@ -641,17 +637,3 @@ mongoose
     crawlerWorker.postMessage({ command: "init" });
   })
   .catch((error) => console.log(error.message));
-
-// mongoose
-//   .connect(
-//     "mongodb://admin:Shack%4013579@ec2-3-108-223-229.ap-south1.compute.amazonaws.com:27017/Crypto-Sentinel"
-//   )
-//   .then(() => {
-//     app.listen(5300, () => {
-//       console.log("Server running on PORT: 5300");
-//     });
-
-//     simulationWorker.postMessage({ command: "init" });
-//     crawlerWorker.postMessage({ command: "init" });
-//   })
-//   .catch((error) => console.log(error.message));
