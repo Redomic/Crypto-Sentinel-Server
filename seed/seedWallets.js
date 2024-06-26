@@ -171,7 +171,7 @@ const seedNodesAndLinks = async () => {
       const source = results[i].From;
       const sourceNode = await Node.findOne({ name: source }).select("_id");
 
-      // console.log(sourceNode);
+      console.log(sourceNode);
       if (sourceNode) {
         const target = results[i].To;
         const targetNode = await Node.findOne({ name: target }).select("_id");
@@ -182,7 +182,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          // console.log(counter);
+          console.log(counter);
         } else {
           const newTargetNode = await Node.create({
             name: target,
@@ -197,7 +197,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          // console.log(counter);
+          console.log(counter);
         }
       } else {
         const newSourceNode = await Node.create({
@@ -218,7 +218,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          // console.log(counter);
+          console.log(counter);
         } else {
           const newTargetNode = await Node.create({
             name: target,
@@ -233,7 +233,7 @@ const seedNodesAndLinks = async () => {
             amount: value,
           });
           counter++;
-          // console.log(counter);
+          console.log(counter);
         }
       }
     } catch (err) {

@@ -17,8 +17,8 @@ import Thread from "./models/Thread.js";
 import OpenAI from "openai";
 import Crawler from "./models/Crawler.js";
 
-const simulationWorker = new Worker("./workers/simulation-worker.js");
-const crawlerWorker = new Worker("./workers/crawler-worker.js");
+// const simulationWorker = new Worker("./workers/simulation-worker.js");
+// const crawlerWorker = new Worker("./workers/crawler-worker.js");
 const app = express();
 
 const openai = new OpenAI({
@@ -28,35 +28,35 @@ const openai = new OpenAI({
 
 var isSimulating = true;
 
-simulationWorker.on("message", async (message) => {
-  try {
-    if (message.type == "update") {
-      console.log("Simulation started...");
-    } else if (message.type == "stop") {
-      isSimulating = false;
-      console.log("== Simulation Stopped ==");
-    }
-  } catch (e) {
-    console.log(e);
-  }
-});
+// simulationWorker.on("message", async (message) => {
+//   try {
+//     if (message.type == "update") {
+//       console.log("Simulation started...");
+//     } else if (message.type == "stop") {
+//       isSimulating = false;
+//       console.log("== Simulation Stopped ==");
+//     }
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
-crawlerWorker.on("message", async (message) => {
-  try {
-    if (message.type == "update") {
-      console.log("Crawler Started");
-    } else if (message.type == "stop") {
-      isSimulating = false;
-      console.log("== Crawler Stopped ==");
-    }
-  } catch (e) {
-    console.log(e);
-  }
-});
+// crawlerWorker.on("message", async (message) => {
+//   try {
+//     if (message.type == "update") {
+//       console.log("Crawler Started");
+//     } else if (message.type == "stop") {
+//       isSimulating = false;
+//       console.log("== Crawler Stopped ==");
+//     }
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
 process.on("SIGINT", () => {
-  simulationWorker.postMessage({ command: "stop" });
-  crawlerWorker.postMessage({ command: "stop" });
+  // simulationWorker.postMessage({ command: "stop" });
+  // crawlerWorker.postMessage({ command: "stop" });
   process.exit();
 });
 
@@ -634,10 +634,24 @@ mongoose
   .connect("mongodb://localhost/Crypto-Sentinel")
   .then(() => {
     app.listen(5300, () => {
-      console.log("Server running on PORT: 5000");
+      console.log("Server running on PORT: 5300");
     });
 
     simulationWorker.postMessage({ command: "init" });
     crawlerWorker.postMessage({ command: "init" });
   })
   .catch((error) => console.log(error.message));
+
+// mongoose
+//   .connect(
+//     "mongodb://admin:Shack%4013579@ec2-3-108-223-229.ap-south1.compute.amazonaws.com:27017/Crypto-Sentinel"
+//   )
+//   .then(() => {
+//     app.listen(5300, () => {
+//       console.log("Server running on PORT: 5300");
+//     });
+
+//     simulationWorker.postMessage({ command: "init" });
+//     crawlerWorker.postMessage({ command: "init" });
+//   })
+//   .catch((error) => console.log(error.message));
