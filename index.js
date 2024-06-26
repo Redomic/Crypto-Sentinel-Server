@@ -626,8 +626,17 @@ app.use((err, req, res, next) => {
 
 // ------------------------------------------------------------- LISTENER
 
+var servermode =
+  process.env.SERVERMODE === "development"
+    ? {}
+    : {
+        authSource: "admin",
+        user: "admin",
+        pass: process.env.MONGOPASS,
+      };
+
 mongoose
-  .connect("mongodb://localhost/Crypto-Sentinel")
+  .connect("mongodb://localhost/Crypto-Sentinel", servermode)
   .then(() => {
     app.listen(5300, () => {
       console.log("Server running on PORT: 5300");
