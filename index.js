@@ -12,19 +12,19 @@ import catchAsync from "./catchAsync.js";
 import Node from "./models/Node.js";
 import Transaction from "./models/Transaction.js";
 
-import { Worker } from "worker_threads";
-import Thread from "./models/Thread.js";
-import OpenAI from "openai";
+// import { Worker } from "worker_threads";
+// import Thread from "./models/Thread.js";
+// import OpenAI from "openai";
 import Crawler from "./models/Crawler.js";
 
 // const simulationWorker = new Worker("./workers/simulation-worker.js");
 // const crawlerWorker = new Worker("./workers/crawler-worker.js");
 const app = express();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+//   dangerouslyAllowBrowser: true,
+// });
 
 var isSimulating = true;
 
@@ -202,112 +202,112 @@ app.get(
   })
 );
 
-app.post(
-  "/api/chat",
-  catchAsync(async (req, res) => {
-    const assistantIdToUse = "asst_FEH0IMG5qtmrgwaFhEry6gqO"; // Replace with your assistant ID
+// app.post(
+//   "/api/chat",
+//   catchAsync(async (req, res) => {
+//     const assistantIdToUse = "asst_FEH0IMG5qtmrgwaFhEry6gqO"; // Replace with your assistant ID
 
-    var currentThread = null;
+//     var currentThread = null;
 
-    const exisitingThread = await Thread.find({ node: req.body.node });
+//     const exisitingThread = await Thread.find({ node: req.body.node });
 
-    console.log("Exisiting Thread: ", exisitingThread);
+//     console.log("Exisiting Thread: ", exisitingThread);
 
-    if (!exisitingThread.length) {
-      console.log("Thread does not exist");
-      const thread = await openai.beta.threads.create();
-      await Thread.create({
-        thread: thread.id,
-        node: req.body.node,
-        messages: [],
-      });
-      console.log("New thread created with ID: ", thread.id, "\n");
-      currentThread = thread.id;
-    } else {
-      currentThread = exisitingThread[0].thread;
-    }
+//     if (!exisitingThread.length) {
+//       console.log("Thread does not exist");
+//       const thread = await openai.beta.threads.create();
+//       await Thread.create({
+//         thread: thread.id,
+//         node: req.body.node,
+//         messages: [],
+//       });
+//       console.log("New thread created with ID: ", thread.id, "\n");
+//       currentThread = thread.id;
+//     } else {
+//       currentThread = exisitingThread[0].thread;
+//     }
 
-    const userMessage = req.body.message;
+//     const userMessage = req.body.message;
 
-    try {
-      const myThreadMessage = await openai.beta.threads.messages.create(
-        currentThread, // Use the stored thread ID for this user
-        {
-          role: "user",
-          content: userMessage,
-        }
-      );
-      console.log("This is the message object: ", myThreadMessage, "\n");
+//     try {
+//       const myThreadMessage = await openai.beta.threads.messages.create(
+//         currentThread, // Use the stored thread ID for this user
+//         {
+//           role: "user",
+//           content: userMessage,
+//         }
+//       );
+//       console.log("This is the message object: ", myThreadMessage, "\n");
 
-      // Run the Assistant
-      const myRun = await openai.beta.threads.runs.create(
-        currentThread, // Use the stored thread ID for this user
-        {
-          assistant_id: assistantIdToUse,
-          instructions:
-            "You're Node Bot, an assistant Data Analyst for Crypto Sentinel, a monitor/tracking layer on blockchain networks. Your job is to assist government agencies and agents in finding patterns, draft reports, and give insight into fighting illicit activities in the blockchain network you're monitoring. You're to be professional. Currently, you're running in beta so there's limited data provided to you, so you can make up things if you don't have available information Start the thread by greeting the agent and giving 4 things you can do. The agent has a GUI that contains a force-directed graph of 15000 nodes and transactions. Give your all your responses in markdown", // Your instructions here
-        }
-      );
-      console.log("This is the run object: ", myRun, "\n");
+//       // Run the Assistant
+//       const myRun = await openai.beta.threads.runs.create(
+//         currentThread, // Use the stored thread ID for this user
+//         {
+//           assistant_id: assistantIdToUse,
+//           instructions:
+//             "You're Node Bot, an assistant Data Analyst for Crypto Sentinel, a monitor/tracking layer on blockchain networks. Your job is to assist government agencies and agents in finding patterns, draft reports, and give insight into fighting illicit activities in the blockchain network you're monitoring. You're to be professional. Currently, you're running in beta so there's limited data provided to you, so you can make up things if you don't have available information Start the thread by greeting the agent and giving 4 things you can do. The agent has a GUI that contains a force-directed graph of 15000 nodes and transactions. Give your all your responses in markdown", // Your instructions here
+//         }
+//       );
+//       console.log("This is the run object: ", myRun, "\n");
 
-      const retrieveRun = async () => {
-        let keepRetrievingRun;
+//       const retrieveRun = async () => {
+//         let keepRetrievingRun;
 
-        while (myRun.status !== "completed") {
-          keepRetrievingRun = await openai.beta.threads.runs.retrieve(
-            currentThread, // Use the stored thread ID for this user
-            myRun.id
-          );
+//         while (myRun.status !== "completed") {
+//           keepRetrievingRun = await openai.beta.threads.runs.retrieve(
+//             currentThread, // Use the stored thread ID for this user
+//             myRun.id
+//           );
 
-          console.log(`Run status: ${keepRetrievingRun.status}`);
+//           console.log(`Run status: ${keepRetrievingRun.status}`);
 
-          if (keepRetrievingRun.status === "completed") {
-            console.log("\n");
-            break;
-          }
-        }
-      };
-      retrieveRun();
+//           if (keepRetrievingRun.status === "completed") {
+//             console.log("\n");
+//             break;
+//           }
+//         }
+//       };
+//       retrieveRun();
 
-      // Retrieve the Messages added by the Assistant to the Thread
-      const waitForAssistantMessage = async () => {
-        await retrieveRun();
+//       // Retrieve the Messages added by the Assistant to the Thread
+//       const waitForAssistantMessage = async () => {
+//         await retrieveRun();
 
-        const allMessages = await openai.beta.threads.messages.list(
-          currentThread // Use the stored thread ID for this user
-        );
+//         const allMessages = await openai.beta.threads.messages.list(
+//           currentThread // Use the stored thread ID for this user
+//         );
 
-        await Thread.updateOne(
-          { thread: currentThread },
-          {
-            messages: allMessages.data.map((message) => {
-              return {
-                role: message.role,
-                content: message.content[0].text.value,
-              };
-            }),
-          }
-        );
+//         await Thread.updateOne(
+//           { thread: currentThread },
+//           {
+//             messages: allMessages.data.map((message) => {
+//               return {
+//                 role: message.role,
+//                 content: message.content[0].text.value,
+//               };
+//             }),
+//           }
+//         );
 
-        // Send the response back to the front end
-        res.status(200).json({
-          status: "success",
-          response: allMessages.data[0].content[0].text.value,
-        });
-        console.log(
-          "------------------------------------------------------------ \n"
-        );
+//         // Send the response back to the front end
+//         res.status(200).json({
+//           status: "success",
+//           response: allMessages.data[0].content[0].text.value,
+//         });
+//         console.log(
+//           "------------------------------------------------------------ \n"
+//         );
 
-        console.log("User: ", myThreadMessage.content[0].text.value);
-        console.log("Assistant: ", allMessages.data[0].content[0].text.value);
-      };
-      waitForAssistantMessage();
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  })
-);
+//         console.log("User: ", myThreadMessage.content[0].text.value);
+//         console.log("Assistant: ", allMessages.data[0].content[0].text.value);
+//       };
+//       waitForAssistantMessage();
+//     } catch (error) {
+//       console.error("Error:", error);
+//       res.status(500).json({ error: "Internal server error" });
+//     }
+//   })
+// );
 
 // app.post(
 //   "/chat",
@@ -569,29 +569,29 @@ app.post(
 //   })
 // );
 
-app.get(
-  "/api/chat/:selectedNode",
-  catchAsync(async (req, res) => {
-    const { selectedNode } = req.params;
-    const thread = await Thread.find({
-      node: selectedNode,
-    });
+// app.get(
+//   "/api/chat/:selectedNode",
+//   catchAsync(async (req, res) => {
+//     const { selectedNode } = req.params;
+//     const thread = await Thread.find({
+//       node: selectedNode,
+//     });
 
-    console.log(thread[0].messages);
+//     console.log(thread[0].messages);
 
-    if (!thread.length) {
-      res.json({
-        status: "success",
-        messages: [],
-      });
-    } else {
-      res.json({
-        status: "success",
-        messages: thread[0].messages,
-      });
-    }
-  })
-);
+//     if (!thread.length) {
+//       res.json({
+//         status: "success",
+//         messages: [],
+//       });
+//     } else {
+//       res.json({
+//         status: "success",
+//         messages: thread[0].messages,
+//       });
+//     }
+//   })
+// );
 
 app.get(
   "/api/crawler",

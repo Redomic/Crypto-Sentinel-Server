@@ -5,9 +5,9 @@ module.exports = {
   jwt: {
     secret: process.env.JWTSECRET,
     options: {
-      audience: "https://www.locaro.in",
+      audience: "https://sentinel.redomic.in",
       expiresIn: "7d",
-      issuer: "locaro.in",
+      issuer: "redomic.in",
     },
     cookie: {
       // CHANGE HTTPONLY TO TRUE AND SAMESITE TO TRUE
