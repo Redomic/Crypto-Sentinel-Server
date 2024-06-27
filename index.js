@@ -636,7 +636,14 @@ var servermode =
       };
 
 mongoose
-  .connect("mongodb://localhost/Crypto-Sentinel", servermode)
+  .connect(
+    "mongodb://ec2-3-108-223-229.ap-south-1.compute.amazonaws.com:27017/Crypto-Sentinel",
+    {
+      authSource: "admin",
+      user: "admin",
+      pass: process.env.MONGOPASS,
+    }
+  )
   .then(() => {
     app.listen(5300, () => {
       console.log("Server running on PORT: 5300");
